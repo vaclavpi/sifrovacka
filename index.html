@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hustoakce - Pozvánka do kmene</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="login-screen" class="screen">
+    <h1>Vítejte na hustoakci!</h1>
+    <p class="intro">
+      Právě jste otevřeli první stránku příběhu, který vás provede Starou Boleslaví a zavede až na místo, kde začíná úplně nová kapitola. Čekají vás šifry, úkoly a rozhodnutí, která prověří vaše hlavy, nohy i týmového ducha. Každá správná odpověď vás posune o krok blíž k cíli. A kdo ví – třeba vás na konci čeká víc než jen dobrý pocit z vyřešené hry…
+    </p>
+    <div class="login-form">
+      <input type="text" id="team-name" placeholder="Název týmu">
+      <input type="password" id="team-password" placeholder="Heslo">
+      <button onclick="login()">Vstoupit</button>
+    </div>
+  </div>
+
+  <!-- HRA -->
+  <div id="game-screen" class="screen hidden">
+<!-- HEADER -->
+<header class="main-header">
+  <div class="header-content">
+  <h1>Hustoprogram roverčátek BoRR 2025</h1>
+  <button class="logout" onclick="logout()">Odhlásit</button>
+  </div>
+</header>
+
+    <h3 id="welcome"></h3>
+
+    <section class="rules">
+      <h3>Pravidla hry</h3>
+      <ol>
+        <li>Nezletilí vždy chodí ve skupinkách o alespoň dvou členech.</li>
+        <li>V průběhu hry lze kontaktovat VaPiho (+420 603 981 192)</li>
+        <li>Web je trošičku vachrlatý, volejte, pokud vám něco nebude fungovat.</li>
+        <li>Hlavním cílem je si hru užít; pokud byste nevěděli, jak dál, zavolejte si o nápovědu.</li>
+        <li>Řešení šifer i odpovědi na otázky zadávejte do formuláře níže a malými písmeny bez diakritiky a bez mezer.</li>
+        <li>Respektujte přírodu a ostatní účastníky hry.</li>
+      </ol>
+      <p>Najděte místa, odpovězte na otázky, rozluštěte šifry. Každá vyřešená šifra vám otevře další část cesty.</p>
+    </section>
+
+    <section class="rules">
+      <h3>Bonusy</h3>
+      <ol>
+        <li>Hudební vložka – zazpívejte cestou po Staré Boleslavi libovolnou písničku nahlas na veřejnosti a pošlete na skupinu "Lišky + Vašek" 10sekundový důkaz.</li>
+        <li>Dobrá duše – po cestě oslovte kolemjdoucího, popřejte mu hezký den a požádejte ho o palec nahoru na fotku s vámi.</li>
+        <li>Stylovka – alespoň jeden člen týmu musí během hry nosit improvizovanou korunu z čehokoliv, dokud ji někdo nepochválí.</li>
+        <li>Vitaminek – přineste alespoň dva různé druhy ovoce (ano, bonbóny nejsou ovoce).</li>
+        <li>Selfie challenge – udělejte týmovou selfie u každého místa, kde je otázka, a na jedné z nich musí všichni dělat „nejhorší možný výraz“.</li>
+      </ol>
+      <p>Najděte místa, odpovězte na otázky, rozluštěte šifry. Každá vyřešená šifra vám otevře další část cesty.</p>
+    </section>
+
+
+    <section class="puzzles">
+      <h3>Šifry</h3>
+      <div id="puzzle-list"></div>
+    </section>
+  </div>
+
+  <!-- DETAIL ŠIFRY -->
+  <div id="puzzle-screen" class="screen hidden">
+    <button class="back-btn" onclick="closePuzzle()">← Zpět</button>
+    <h3 id="puzzle-title"></h3>
+    <div id="puzzle-content"></div>
+  </div>
+  
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <img src="skautskelogo.png" alt="Skaut" class="footer-logo">
+      <p>Pro potřeby organizační jednotky 219.09.006 - oddíl BoRR pod zapsaným spolkem Junák - český skaut, středisko Stará Boleslav připravil: </p>
+        <a href="https://vaclavpi.github.io/">Václav Pisinger (VaPi) - výchovný zpravodaj SRJ</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
