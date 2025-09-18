@@ -3,52 +3,99 @@ const puzzles = [
   {
     id:1,
     name:"Začátek cesty",
-    question:"Na Mariánském náměstí ve Staré Boleslavi je kašna. Kolik má na vrchu andělů?",
-    answer:"4",
+    question:"Jaké je poslední slovo na podstavci sochy sv. Václava na Mariánském náměstí?",
+    answer:"budoucim",
     pdf:"sifra1.pdf",
-    codeAnswer:"labe"
+    codeAnswer:"labe",
+    points: 20
   },
   {
     id:2,
-    name:"Pod starou bránou",
-    question:"U brány Pražské najdete desku. Kolikátý je tam letopočet zleva?",
-    answer:"3",
+    name:"Vstupní brána",
+    question:"Kolik zlatých okvětních lístků je vidět na vstupové bráně, kde podle legendy zavraždili sv. Václava?",
+    answer:"8",
     pdf:"sifra2.pdf",
-    codeAnswer:"esus"
+    codeAnswer:"esus",
+    points: 20
   },
   {
     id:3,
-    name:"Kroky historie",
-    question:"Kolik schodů vede k bazilice sv. Václava?",
-    answer:"28",
+    name:"Kaple sv. Rocha",
+    question:"Kolik zlatých Křížků je v kapli sv. Rocha?",
+    answer:"2",
     pdf:"sifra3.pdf",
-    codeAnswer:"90minut"
+    codeAnswer:"90minut",
+    points: 20
   },
   {
     id:4,
-    name:"Řeka a most",
-    question:"Na mostě přes Labe je cedule s názvem. Jaké je třetí slovo?",
-    answer:"most",
+    name:"Lipová alej",
+    question:"Kolik je v Lipové aleji olympijských kovových zástav?",
+    answer:"28",
     pdf:"sifra4.pdf",
-    codeAnswer:"cteniskautskehostoleti"
+    codeAnswer:"cteniskautskehostoleti",
+    points: 20
   },
   {
     id:5,
-    name:"Cesta k městu",
-    question:"Na autobusovém nádraží ve Staré Boleslavi – kolikáté nástupiště je směr Praha?",
-    answer:"2",
+    name:"Rychlostní omezení",
+    question:"Na kolik km v h je omezená rychlost z ulice 5. Května do Dobrovského (až po odbočení) směrem dětské hřiště?",
+    answer:"30",
     pdf:"sifra5.pdf",
-    codeAnswer:"kmen"
+    codeAnswer:"kmen",
+    points: 20
   },
   {
     id:6,
-    name:"Poslední klíč",
-    question:"Jaké číslo autobusu vás doveze na místo, kde hra končí?",
-    answer:"367",
-    pdf:"sifra6.wav",
-    codeAnswer:"praha"
+    name:"Uzeniny u Jiříka",
+    question:"Jak se jmenuje občerstvení vedle stánku uzeniny u Jiříka nedaleko zahradnictví Benešovi?",
+    answer:"umysi",
+    pdf:"sifra6.pdf",
+    codeAnswer:"praha",
+    points: 20
   }
 ];
+
+const bonuses = [
+    { id: 1, text: "Hudební vložka – zazpívejte cestou po Staré Boleslavi libovolnou písničku nahlas na veřejnosti a pošlete na skupinu \"Lišky + Vašek\" 10sekundový důkaz.", points: 10 },
+    { id: 2, text: "Dobrá duše – po cestě oslovte kolemjdoucího, popřejte mu hezký den a požádejte ho o palec nahoru na fotku s vámi.", points: 10 },
+    { id: 3, text: "Stylovka – alespoň jeden člen týmu musí během hry nosit improvizovanou korunu z čehokoliv, dokud ji někdo nepochválí.", points: 10 },
+    { id: 4, text: "Vitaminek – přineste alespoň dva různé druhy ovoce.", points: 5 },
+    { id: 5, text: "Selfie challenge – udělejte týmovou selfie u každého místa, kde je otázka, a na jedné z nich musí všichni dělat \"nejhorší možný výraz\".", points: 15 }
+];
+
+function showAlert(message, type, containerId) {
+    const alertPlaceholder = document.getElementById(containerId);
+    alertPlaceholder.innerHTML = '';
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = [
+        `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+        `   <div>${message}</div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+    ].join('');
+    alertPlaceholder.append(wrapper);
+}
+
+function showToast(message, type) {
+    const toastContainer = document.getElementById('toast-container');
+    const toastEl = document.createElement('div');
+    toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+    toastEl.role = 'alert';
+    toastEl.ariaLive = 'assertive';
+    toastEl.ariaAtomic = 'true';
+    toastEl.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    toastContainer.appendChild(toastEl);
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}
 
 // Přihlášení
 function login(){
@@ -58,12 +105,12 @@ function login(){
     localStorage.setItem('team', name);
     showGame();
   } else {
-    alert('Špatné heslo nebo prázdný název týmu!');
+    showAlert('Špatné heslo nebo prázdný název týmu!', 'danger', 'login-alert');
   }
 }
 
 function logout(){
-  localStorage.removeItem('team');
+  localStorage.clear();
   document.getElementById('game-screen').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
 }
@@ -76,7 +123,52 @@ function showGame(){
   document.getElementById('puzzle-screen').classList.add('hidden');
   document.getElementById('game-screen').classList.remove('hidden');
   renderPuzzles();
+  renderBonuses();
+  updateScore();
 }
+
+function renderBonuses() {
+    const bonusList = document.getElementById('bonus-list');
+    bonusList.innerHTML = '';
+    bonuses.forEach(bonus => {
+        const checked = localStorage.getItem('bonus_' + bonus.id) === 'true';
+        const div = document.createElement('div');
+        div.className = 'form-check';
+        div.innerHTML = `
+            <input class="form-check-input" type="checkbox" id="bonus-${bonus.id}" ${checked ? 'checked' : ''} onchange="toggleBonus(${bonus.id}, ${bonus.points})">
+            <label class="form-check-label" for="bonus-${bonus.id}">
+                ${bonus.text} (${bonus.points} bodů)
+            </label>
+        `;
+        bonusList.appendChild(div);
+    });
+}
+
+function toggleBonus(id) {
+    const checkbox = document.getElementById(`bonus-${id}`);
+    if (checkbox.checked) {
+        localStorage.setItem('bonus_' + id, 'true');
+    } else {
+        localStorage.removeItem('bonus_' + id);
+    }
+    updateScore();
+}
+
+function updateScore() {
+    let score = 0;
+    puzzles.forEach(p => {
+        if (localStorage.getItem('puzzle_' + p.id + '_solved')) {
+            score += p.points;
+        }
+    });
+    bonuses.forEach(b => {
+        if (localStorage.getItem('bonus_' + b.id) === 'true') {
+            score += b.points;
+        }
+    });
+    document.getElementById('score').innerText = score;
+}
+
 
 // Vykreslení seznamu šifer s postupným odemykáním
 function renderPuzzles(){
@@ -88,17 +180,18 @@ function renderPuzzles(){
     const solved = localStorage.getItem('puzzle_'+p.id+'_solved');
     if(solved) lastSolvedIndex = idx;
 
-    const div = document.createElement('div');
-    div.className = 'puzzle-item';
-    div.innerText = "Šifra "+p.id+": "+p.name+" - "+(solved?"Vyřešeno":"Nevyřešeno");
+    const a = document.createElement('a');
+    a.href = "#";
+    a.className = 'list-group-item list-group-item-action puzzle-item';
+    a.innerHTML = `Šifra ${p.id}: ${p.name} <span class="badge bg-${solved ? 'success' : 'secondary'} float-end">${solved ? 'Vyřešeno' : 'Nevyřešeno'}</span>`;
 
     const locked = idx > lastSolvedIndex + 1;
     if(locked){
-      div.classList.add('locked');
+      a.classList.add('locked');
     } else {
-      div.onclick = () => openPuzzle(p.id);
+      a.onclick = () => openPuzzle(p.id);
     }
-    list.appendChild(div);
+    list.appendChild(a);
   });
 }
 
@@ -112,20 +205,18 @@ function openPuzzle(id){
   const questionSolved = localStorage.getItem('puzzle_'+id+'_question');
   const solved = localStorage.getItem('puzzle_'+id+'_solved');
 
-  let html = "<p>"+puzzle.question+"</p>";
+  let html = `<p>${puzzle.question}</p>`;
 
   if(!questionSolved){
-    html += '<input type="text" id="answer" placeholder="Odpověď">';
-    html += '<button onclick="checkAnswer('+id+')">Odeslat odpověď</button>';
+    html += '<div class="input-group mb-3"><input type="text" id="answer" class="form-control" placeholder="Odpověď"><button class="btn btn-outline-secondary" type="button" onclick="checkAnswer('+id+')">Odeslat odpověď</button></div>';
   } else if(!solved){
     html += '<p><strong>Otázka vyřešena!</strong> Tady je šifra:</p>';
-    html += '<button onclick="window.open(\''+puzzle.pdf+'\')">Otevřít šifru</button>';
+    html += `<button class="btn btn-success mb-3" onclick="window.open('${puzzle.pdf}')">Otevřít šifru</button>`;
     html += '<p>Zadejte odpověď na šifru:</p>';
-    html += '<input type="text" id="code" placeholder="Odpověď na šifru">';
-    html += '<button onclick="checkCode('+id+')">Odeslat kód</button>';
+    html += '<div class="input-group mb-3"><input type="text" id="code" class="form-control" placeholder="Odpověď na šifru"><button class="btn btn-outline-secondary" type="button" onclick="checkCode('+id+')">Odeslat kód</button></div>';
   } else {
     html += '<p><strong>Šifra vyřešena!</strong></p>';
-    html += '<button style="color: white;" onclick="window.open(\''+puzzle.pdf+'\')">Zobrazit šifru znovu</button>';
+    html += `<button class="btn btn-info" onclick="window.open('${puzzle.pdf}')">Zobrazit šifru znovu</button>`;
   }
 
   document.getElementById('puzzle-content').innerHTML = html;
@@ -139,7 +230,7 @@ function checkAnswer(id){
     localStorage.setItem('puzzle_'+id+'_question', true);
     openPuzzle(id);
   } else {
-    alert('Špatná odpověď, zkuste to znovu.');
+    showAlert('Špatná odpověď, zkuste to znovu.', 'danger', 'puzzle-alert');
   }
 }
 
@@ -149,9 +240,17 @@ function checkCode(id){
   const val = document.getElementById('code').value.trim().toLowerCase();
   if(val === puzzle.codeAnswer.toLowerCase()){
     localStorage.setItem('puzzle_'+id+'_solved', true);
-    openPuzzle(id);
+    updateScore();
+
+    if (id === puzzles.length) { // Last puzzle
+        showToast("Postupujte dle instrukcí v poslední šifře.", "success");
+        openPuzzle(id);
+    } else {
+        showToast("Šifra vyřešena!", "success");
+        setTimeout(closePuzzle, 2000);
+    }
   } else {
-    alert('Špatný kód ze šifry, zkuste to znovu.');
+    showAlert('Špatný kód ze šifry, zkuste to znovu.', 'danger', 'puzzle-alert');
   }
 }
 
@@ -163,4 +262,3 @@ function closePuzzle(){
 window.onload = () => {
   if(localStorage.getItem('team')) showGame();
 };
-

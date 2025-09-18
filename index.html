@@ -4,83 +4,111 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hustoakce - Pozvánka do kmene</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="d-flex flex-column vh-100">
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toast-container"></div>
+
   <!-- LOGIN -->
-  <div id="login-screen" class="screen">
-    <h1>Vítejte na hustoakci!</h1>
-    <p class="intro">
-      Právě jste otevřeli první stránku příběhu, který vás provede Starou Boleslaví a zavede až na místo, kde začíná úplně nová kapitola. Čekají vás šifry, úkoly a rozhodnutí, která prověří vaše hlavy, nohy i týmového ducha. Každá správná odpověď vás posune o krok blíž k cíli. A kdo ví – třeba vás na konci čeká víc než jen dobrý pocit z vyřešené hry…
-    </p>
-    <div class="login-form">
-      <input type="text" id="team-name" placeholder="Název týmu">
-      <input type="password" id="team-password" placeholder="Heslo">
-      <button onclick="login()">Vstoupit</button>
+  <div id="login-screen" class="login-container d-flex align-items-center justify-content-center py-5">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+      <div class="card shadow-lg border-0">
+        <div class="card-body text-center p-4 p-sm-5">
+          <img src="skautskelogo.png" alt="Skaut" class="mb-4" style="width: 100px;">
+          <div id="login-alert"></div>
+          <h1 class="card-title h2 mb-3">Vítejte na hustoakci!</h1>
+          <p class="card-text text-muted mb-4">
+            Zadejte název týmu a heslo pro vstup do hry.
+          </p>
+          <div class="login-form">
+            <div class="form-floating mb-3">
+              <input type="text" id="team-name" class="form-control" placeholder="Název týmu">
+              <label for="team-name">Název týmu</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" id="team-password" class="form-control" placeholder="Heslo">
+              <label for="team-password">Heslo</label>
+            </div>
+            <button onclick="login()" class="btn btn-primary w-100 btn-lg">Vstoupit</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- HRA -->
-  <div id="game-screen" class="screen hidden">
-<!-- HEADER -->
-<header class="main-header">
-  <div class="header-content">
-  <h1>Hustoprogram roverčátek BoRR 2025</h1>
-  <button class="logout" onclick="logout()">Odhlásit</button>
-  </div>
-</header>
+  <div id="game-screen" class="container-fluid hidden">
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="d-flex justify-content-between align-items-center p-3">
+            <div>
+                <h1>Hustoprogram roverčátek BoRR 2025</h1>
+            </div>
+            <button class="btn btn-secondary" onclick="logout()">Odhlásit</button>
+        </div>
+    </header>
 
-    <h3 id="welcome"></h3>
+    <main class="container mt-4">
+        <h3 id="welcome"></h3> <h5 class="mb-0">Skóre: <span id="score">0</span></h5>
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                  Pravidla hry
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+                    <ol>
+                        <li>Nezletilí vždy chodí ve skupinkách o alespoň dvou členech.</li>
+                        <li>V průběhu hry lze kontaktovat VaPiho (+420 603 981 192)</li>
+                        <li>Web je trošičku vachrlatý, volejte, pokud vám něco nebude fungovat.</li>
+                        <li>Hlavním cílem je si hru užít; pokud byste nevěděli, jak dál, zavolejte si o nápovědu.</li>
+                        <li>Řešení šifer i odpovědi na otázky zadávejte do formuláře níže a malými písmeny bez diakritiky a bez mezer.</li>
+                        <li>Respektujte přírodu a ostatní účastníky hry.</li>
+                    </ol>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                  Bonusy
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                <div class="accordion-body" id="bonus-list">
+                    <!-- Bonusy se vykreslí zde -->
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <section class="rules">
-      <h3>Pravidla hry</h3>
-      <ol>
-        <li>Nezletilí vždy chodí ve skupinkách o alespoň dvou členech.</li>
-        <li>V průběhu hry lze kontaktovat VaPiho (+420 603 981 192)</li>
-        <li>Web je trošičku vachrlatý, volejte, pokud vám něco nebude fungovat.</li>
-        <li>Hlavním cílem je si hru užít; pokud byste nevěděli, jak dál, zavolejte si o nápovědu.</li>
-        <li>Řešení šifer i odpovědi na otázky zadávejte do formuláře níže a malými písmeny bez diakritiky a bez mezer.</li>
-        <li>Respektujte přírodu a ostatní účastníky hry.</li>
-      </ol>
-      <p>Najděte místa, odpovězte na otázky, rozluštěte šifry. Každá vyřešená šifra vám otevře další část cesty.</p>
-    </section>
-
-    <section class="rules">
-      <h3>Bonusy</h3>
-      <ol>
-        <li>Hudební vložka – zazpívejte cestou po Staré Boleslavi libovolnou písničku nahlas na veřejnosti a pošlete na skupinu "Lišky + Vašek" 10sekundový důkaz.</li>
-        <li>Dobrá duše – po cestě oslovte kolemjdoucího, popřejte mu hezký den a požádejte ho o palec nahoru na fotku s vámi.</li>
-        <li>Stylovka – alespoň jeden člen týmu musí během hry nosit improvizovanou korunu z čehokoliv, dokud ji někdo nepochválí.</li>
-        <li>Vitaminek – přineste alespoň dva různé druhy ovoce (ano, bonbóny nejsou ovoce).</li>
-        <li>Selfie challenge – udělejte týmovou selfie u každého místa, kde je otázka, a na jedné z nich musí všichni dělat „nejhorší možný výraz“.</li>
-      </ol>
-      <p>Najděte místa, odpovězte na otázky, rozluštěte šifry. Každá vyřešená šifra vám otevře další část cesty.</p>
-    </section>
-
-
-    <section class="puzzles">
-      <h3>Šifry</h3>
-      <div id="puzzle-list"></div>
-    </section>
+        <section class="puzzles mt-4">
+            <h3>Šifry</h3>
+            <div id="puzzle-list" class="list-group"></div>
+        </section>
+    </main>
+      
+      <!-- FOOTER -->
+      <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <img src="skautskelogo.png" alt="Skaut" class="footer-logo mb-2" style="height: 50px;">
+            <p class="text-muted">Pro potřeby organizační jednotky 219.09.006 - oddíl BoRR pod zapsaným spolkem Junák - český skaut, středisko Stará Boleslav připravil: <a href="https://vaclavpi.github.io/">Václav Pisinger (VaPi) - výchovný zpravodaj SRJ</a></p>
+        </div>
+      </footer>
   </div>
 
   <!-- DETAIL ŠIFRY -->
-  <div id="puzzle-screen" class="screen hidden">
-    <button class="back-btn" onclick="closePuzzle()">← Zpět</button>
+  <div id="puzzle-screen" class="container mt-4 hidden">
+    <button class="btn btn-primary mb-3" onclick="closePuzzle()">← Zpět</button>
+    <div id="puzzle-alert"></div>
     <h3 id="puzzle-title"></h3>
     <div id="puzzle-content"></div>
   </div>
-  
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-content">
-      <img src="skautskelogo.png" alt="Skaut" class="footer-logo">
-      <p>Pro potřeby organizační jednotky 219.09.006 - oddíl BoRR pod zapsaným spolkem Junák - český skaut, středisko Stará Boleslav připravil: </p>
-        <a href="https://vaclavpi.github.io/">Václav Pisinger (VaPi) - výchovný zpravodaj SRJ</a>
-    </div>
-  </footer>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script src="script.js"></script>
 </body>
 </html>
