@@ -99,29 +99,38 @@ function showToast(message, type) {
 
 // Přihlášení
 function login(){
+  console.log("login() called");
   const name = document.getElementById('team-name').value;
   const pass = document.getElementById('team-password').value;
   if(pass === '2025' && name.trim() !== ''){
+    console.log("Login success");
     localStorage.setItem('team', name);
     showGame();
   } else {
+    console.log("Login failed");
     showAlert('Špatné heslo nebo prázdný název týmu!', 'danger', 'login-alert');
   }
 }
 
 function logout(){
+  console.log("logout() called");
   localStorage.clear();
-  document.getElementById('game-screen').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('puzzle-screen').classList.add('hidden');
 }
 
 function showGame(){
+  console.log("showGame() called");
   const team = localStorage.getItem('team');
-  if(!team) return;
+  if(!team) {
+      console.log("No team in localStorage, returning");
+      return;
+  }
   document.getElementById('welcome').innerText = "Tým: " + team;
   document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('puzzle-screen').classList.add('hidden');
   document.getElementById('game-screen').classList.remove('hidden');
+  document.getElementById('puzzle-screen').classList.add('hidden');
   renderPuzzles();
   renderBonuses();
   updateScore();
@@ -197,6 +206,7 @@ function renderPuzzles(){
 
 // Otevření konkrétní šifry
 function openPuzzle(id){
+  console.log(`openPuzzle(${id}) called`);
   const puzzle = puzzles.find(p=>p.id===id);
   document.getElementById('game-screen').classList.add('hidden');
   document.getElementById('puzzle-screen').classList.remove('hidden');
@@ -255,10 +265,20 @@ function checkCode(id){
 }
 
 function closePuzzle(){
+  console.log("closePuzzle() called");
   document.getElementById('puzzle-screen').classList.add('hidden');
-  showGame();
+  document.getElementById('game-screen').classList.remove('hidden');
 }
 
 window.onload = () => {
-  if(localStorage.getItem('team')) showGame();
+  console.log("window.onload called");
+  if(localStorage.getItem('team')) {
+    console.log("Team found in localStorage, calling showGame()");
+    showGame();
+  } else {
+    console.log("No team in localStorage, showing login screen");
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('puzzle-screen').classList.add('hidden');
+  }
 };
